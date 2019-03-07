@@ -1,16 +1,12 @@
 // import { connect } from 'react-redux'
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 
 export class Board extends Component {
-  static propTypes = {
-    prop: PropTypes
-  }
   constructor(props) {
     super(props)
     this.state = {
       result: 0,
-      results: [],
+      results: [0],
       bank: 10000,
       movingBank: [1000],
       bet: 5
@@ -19,22 +15,25 @@ export class Board extends Component {
   }
 
   handleClick() {
-    let winnings = -this.state.bet
-    let max = 36
-    let min = 0
-    let result = Math.floor(Math.random() * (max - min + 1) + min)
+    const max = 36
+    const min = 0
+    const result = Number(Math.floor(Math.random() * (max - min + 1) + min))
+    const newResult = this.state.results.slice()
+    newResult.push(result)
+    const newMovingBank = this.state.movingBank.slice()
+    newMovingBank.push(
+      result < 25
+        ? this.state.movingBank - this.state.bet
+        : this.state.movingBank + this.state.bet * 3
+    )
     this.setState({
       result: result,
-      results: this.state.results.push(result),
+      results: newResult,
       bank:
         result < 25
           ? this.state.bank - this.state.bet
           : this.state.bank + this.state.bet * 3,
-      movingBank: this.state.movingBank.push(
-        result < 25
-          ? this.state.movingBank - this.state.bet
-          : this.state.movingBank + this.state.bet * 3
-      ),
+      movingBank: newMovingBank,
       bet: result < 25 ? 5 : this.state.bet * 2
     })
   }
@@ -42,8 +41,9 @@ export class Board extends Component {
   render() {
     return (
       <div>
-        {/* <div>
-          <div>
+        <button onClick={this.handleClick}>Click Me</button>
+        <div className="table-container">
+          <div className="column-container">
             result: {this.state.result}
             <div>
               {this.state.results.map((result, idx) => {
@@ -51,7 +51,7 @@ export class Board extends Component {
               })}
             </div>
           </div>
-          <div>
+          <div className="column-container">
             bank:
             <div>
               {this.state.movingBank.map((bank, idx) => {
@@ -59,12 +59,13 @@ export class Board extends Component {
               })}
             </div>
           </div>
-        </div> */}
+        </div>
       </div>
     )
   }
 }
 
+export default Board
 // const mapStateToProps = state => ({})
 
 // const mapDispatchToProps = {}

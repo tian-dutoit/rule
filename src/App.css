@@ -31,3 +31,13 @@
     transform: rotate(360deg);
   }
 }
+
+.table-container {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.column-container {
+  display: flex;
+  flex-flow: column nowrap;
+}
