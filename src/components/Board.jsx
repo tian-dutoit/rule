@@ -10,7 +10,8 @@ export class Board extends Component {
       bank: 10000,
       movingBank: [1000],
       bet: 5,
-      counter: 2
+      low: 10000,
+      high: 10000
     }
     this.handleClick = this.handleClick.bind(this)
     this.loopClicks = this.loopClicks.bind(this)
@@ -34,35 +35,37 @@ export class Board extends Component {
       bank: newBank,
       movingBank: newMovingBank,
       bet: result < 25 ? this.state.bet * 2 : 5,
-      counter: this.state.counter - 1
+      low: Math.min(...newMovingBank),
+      high: Math.max(...newMovingBank)
     })
   }
 
   loopClicks() {
-    if (this.state.counter > 0) {
-      const max = 36
-      const min = 0
-      const result = Number(Math.floor(Math.random() * (max - min + 1) + min))
-      const newResult = this.state.results.slice(0)
-      newResult.push(result)
-      const newBank =
-        result < 25
-          ? this.state.bank - this.state.bet
-          : this.state.bank + this.state.bet * 3
-      const newMovingBank = this.state.movingBank.slice(0)
-      newMovingBank.push(newBank)
-      this.setState(
-        {
-          result: result,
-          results: newResult,
-          bank: newBank,
-          movingBank: newMovingBank,
-          bet: result < 25 ? this.state.bet * 2 : 5,
-          counter: this.state.counter - 1
-        },
-        this.handleClick()
-      )
+    const loops = 100
+    const max = 36
+    const min = 0
+    let results = this.state.results.slice(0)
+    let bank = this.state.bank
+    let movingBank = this.state.movingBank.slice(0)
+    let bet = this.state.bet
+    let result = 0
+    for (let i = 0; i < loops; i++) {
+      result = Math.floor(Math.random() * (max - min + 1) + min)
+      results.push(result)
+      bank = result < 25 ? bank - bet : bank + bet * 3
+      movingBank.push(bank)
+      bet = result < 25 ? this.state.bet * 2 : 5
     }
+
+    this.setState({
+      result: result,
+      results: results,
+      bank: bank,
+      movingBank: movingBank,
+      bet: bet,
+      low: Math.min(...movingBank),
+      high: Math.max(...movingBank)
+    })
   }
 
   render() {
