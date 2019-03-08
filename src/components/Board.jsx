@@ -10,7 +10,7 @@ export class Board extends Component {
       loops: 100,
       low: 10000,
       high: 10000,
-      movingBank: [1000],
+      movingBank: [10000],
       result: 0,
       results: [0],
       streak: 0,
@@ -55,7 +55,7 @@ export class Board extends Component {
       bet: !win ? this.state.bet * 2 : 5,
       low: newMovingBank.slice(0).sort(function(a, b) {
         return a - b
-      })[1],
+      })[0],
       high: newMovingBank.slice(0).sort(function(a, b) {
         return b - a
       })[0],
@@ -67,6 +67,52 @@ export class Board extends Component {
       })[0]
     })
   }
+
+  // loopClicks() {
+  //   const loops = this.state.loops
+  //   const max = 36
+  //   const min = 0
+  //   let results = this.state.results.slice(0)
+  //   let bank = this.state.bank
+  //   let movingBank = this.state.movingBank.slice(0)
+  //   let bet = this.state.bet
+  //   let result = 0
+  //   let streak = this.state.streak
+  //   let updateStreaks = this.state.streaks
+  //   let win = this.state.win
+  //   let perviousWin = this.state.win
+  //   for (let i = 0; i < loops; i++) {
+  //     result = Math.floor(Math.random() * (max - min + 1) + min)
+  //     results.push(result)
+  //     bank = result < 25 ? bank - bet : bank + bet * 3
+  //     movingBank.push(bank)
+  //     bet = result < 25 ? bet * 2 : 5
+  //     let previousStreak = streak
+  //     streak = (result < 25 && !win) || (result > 24 && win) ? streak + 1 : 1
+  //     win = result < 25 ? false : true
+  //     win !== perviousWin && updateStreaks.push(previousStreak)
+  //     perviousWin = win
+  //   }
+  //   this.setState({
+  //     result: result,
+  //     results: results,
+  //     bank: bank,
+  //     movingBank: movingBank,
+  //     bet: bet,
+  //     low: movingBank.slice(0).sort(function(a, b) {
+  //       return a - b
+  //     })[0],
+  //     high: movingBank.slice(0).sort(function(a, b) {
+  //       return b - a
+  //     })[0],
+  //     win: win,
+  //     streak: streak,
+  //     streaks: updateStreaks,
+  //     longestStreak: updateStreaks.slice(0).sort(function(a, b) {
+  //       return b - a
+  //     })[0]
+  //   })
+  // }
 
   loopClicks() {
     const loops = this.state.loops
@@ -92,6 +138,7 @@ export class Board extends Component {
       win = result < 25 ? false : true
       win !== perviousWin && updateStreaks.push(previousStreak)
       perviousWin = win
+      bet = streak > 10 ? 5 : bet
     }
     this.setState({
       result: result,
@@ -101,7 +148,7 @@ export class Board extends Component {
       bet: bet,
       low: movingBank.slice(0).sort(function(a, b) {
         return a - b
-      })[1],
+      })[0],
       high: movingBank.slice(0).sort(function(a, b) {
         return b - a
       })[0],
@@ -127,7 +174,11 @@ export class Board extends Component {
         />
         <div>{this.state.bet}</div>
         <div>You {this.state.win ? 'Won!' : 'Lost'}</div>
-
+        <div>Streak: {this.state.streak}</div>
+        <div>
+          longestStreak: {this.state.longestStreak}, odds:
+          {Math.pow(0.66, this.state.longestStreak) * 100}
+        </div>
         <div className="table-container">
           <div className="column-container">
             result: {this.state.result}
