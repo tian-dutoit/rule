@@ -5,16 +5,24 @@ export class Board extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      result: 0,
-      results: [0],
       bank: 10000,
-      movingBank: [1000],
       bet: 5,
+      loops: 100,
       low: 10000,
-      high: 10000
+      high: 10000,
+      movingBank: [1000],
+      result: 0,
+      results: [0]
     }
+    this.handleChange = this.handleChange.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.loopClicks = this.loopClicks.bind(this)
+  }
+
+  handleChange(e) {
+    this.setState({
+      [e.target.name]: Number(e.target.value)
+    })
   }
 
   handleClick() {
@@ -41,7 +49,7 @@ export class Board extends Component {
   }
 
   loopClicks() {
-    const loops = 100
+    const loops = this.state.loops
     const max = 36
     const min = 0
     let results = this.state.results.slice(0)
@@ -72,7 +80,13 @@ export class Board extends Component {
     return (
       <div>
         <button onClick={this.handleClick}>Click Me</button>
-        <button onClick={this.loopClicks}>100 Clicks</button>
+        <button onClick={this.loopClicks}>{this.state.loops} Loops</button>
+        <input
+          type="number"
+          placeholder="Enter number of loops"
+          name="loops"
+          onChange={this.handleChange}
+        />
         <div>{this.state.bet}</div>
         <div className="table-container">
           <div className="column-container">
