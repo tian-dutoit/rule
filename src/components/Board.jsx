@@ -12,11 +12,33 @@ export class Board extends Component {
       high: 10000,
       movingBank: [1000],
       result: 0,
-      results: [0]
+      results: [0],
+      streak: 0,
+      win: true
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.loopClicks = this.loopClicks.bind(this)
+  }
+
+  sortAsc(a, b) {
+    if (a < b) {
+      return -1
+    } else if (a > b) {
+      return 1
+    } else {
+      return 0
+    }
+  }
+
+  sortDesc(a, b) {
+    if (a < b) {
+      return 1
+    } else if (a > b) {
+      return -1
+    } else {
+      return 0
+    }
   }
 
   handleChange(e) {
@@ -36,6 +58,7 @@ export class Board extends Component {
         ? this.state.bank - this.state.bet
         : this.state.bank + this.state.bet * 3
     const newMovingBank = this.state.movingBank.slice(0)
+    let win = result < 25 ? false : true
     newMovingBank.push(newBank)
     this.setState({
       result: result,
@@ -43,8 +66,17 @@ export class Board extends Component {
       bank: newBank,
       movingBank: newMovingBank,
       bet: result < 25 ? this.state.bet * 2 : 5,
-      low: Math.min(...newMovingBank),
-      high: Math.max(...newMovingBank)
+      low: newMovingBank.slice(0).sort(function(a, b) {
+        return a - b
+      })[0],
+      high: newMovingBank.slice(0).sort(function(a, b) {
+        return b - a
+      })[0],
+      win: win,
+      streak:
+        (result < 25 && !win) || (result > 24 && win)
+          ? this.state.streak + 1
+          : 0
     })
   }
 
@@ -57,22 +89,36 @@ export class Board extends Component {
     let movingBank = this.state.movingBank.slice(0)
     let bet = this.state.bet
     let result = 0
+    let streak = this.state.streak
+    let win = this.state.win
     for (let i = 0; i < loops; i++) {
       result = Math.floor(Math.random() * (max - min + 1) + min)
       results.push(result)
       bank = result < 25 ? bank - bet : bank + bet * 3
       movingBank.push(bank)
       bet = result < 25 ? this.state.bet * 2 : 5
+      win = result < 25 ? false : true
+      streak =
+        (result < 25 && !win) || (result > 24 && win)
+          ? this.state.streak + 1
+          : 0
     }
-
     this.setState({
       result: result,
       results: results,
       bank: bank,
       movingBank: movingBank,
       bet: bet,
-      low: Math.min(...movingBank),
-      high: Math.max(...movingBank)
+      // low: Math.min(...movingBank),
+      // high: Math.max(...movingBank),
+      low: movingBank.slice(0).sort(function(a, b) {
+        return a - b
+      })[0],
+      high: movingBank.slice(0).sort(function(a, b) {
+        return b - a
+      })[0],
+      win: win,
+      streak: streak
     })
   }
 
@@ -88,6 +134,8 @@ export class Board extends Component {
           onChange={this.handleChange}
         />
         <div>{this.state.bet}</div>
+        <div>You {this.state.win ? 'Won!' : 'Lost'}</div>
+
         <div className="table-container">
           <div className="column-container">
             result: {this.state.result}
