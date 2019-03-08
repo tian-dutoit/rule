@@ -61,7 +61,10 @@ export class Board extends Component {
       })[0],
       win: win,
       streak: streak,
-      streaks: updateStreaks
+      streaks: updateStreaks,
+      longestStreak: updateStreaks.slice(0).sort(function(a, b) {
+        return b - a
+      })[0]
     })
   }
 
@@ -83,7 +86,7 @@ export class Board extends Component {
       results.push(result)
       bank = result < 25 ? bank - bet : bank + bet * 3
       movingBank.push(bank)
-      bet = result < 25 ? this.state.bet * 2 : 5
+      bet = result < 25 ? bet * 2 : 5
       let previousStreak = streak
       streak = (result < 25 && !win) || (result > 24 && win) ? streak + 1 : 1
       win = result < 25 ? false : true
@@ -104,7 +107,10 @@ export class Board extends Component {
       })[0],
       win: win,
       streak: streak,
-      streaks: updateStreaks
+      streaks: updateStreaks,
+      longestStreak: updateStreaks.slice(0).sort(function(a, b) {
+        return b - a
+      })[0]
     })
   }
 
