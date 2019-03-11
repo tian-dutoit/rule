@@ -1,6 +1,6 @@
 // import { connect } from 'react-redux'
 import React, { Component } from 'react'
-import Graphs from './Graphs'
+import BarChart from './BarChart'
 
 export class Board extends Component {
   constructor(props) {
@@ -155,7 +155,7 @@ export class Board extends Component {
             </div>
           </div>
         </div>
-        <Graphs data={this.state} />
+        <BarChart data={[5, 10, 1, 3]} size={[500, 500]} />
       </div>
     )
   }

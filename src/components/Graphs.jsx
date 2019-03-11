@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
 import '../App.css'
-import stocks from '../Stocks.csv'
+import '../stocks.csv'
 
 export default class Graphs extends Component {
   // chart = {
@@ -54,10 +54,10 @@ export default class Graphs extends Component {
     const x = d3.scaleTime([0, width])
     const y = d3.scaleLinear([height, 0])
     // Define the axes
-    const xAxis = d3.axisBottom(x)
+    const xAxis = d3.axisBottom(x).ticks(5)
     const yAxis = d3.axisLeft(y).ticks(5)
     // Define the line
-    const priceline = d3.svg
+    const priceline = d3
       .line()
       .x(function(d) {
         return x(d.date)
@@ -76,7 +76,18 @@ export default class Graphs extends Component {
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
     // Get the data
     // d3.csv('stocks.csv', function(error, data) {
-    d3.csv(stocks, function(error, data) {
+    let fakeData = [
+      ['symbol', 'date', 'price'],
+      [('MSFT', 'Jan 2000', 39.81)],
+      ['MSFT', 'Feb 2000', 36.35],
+      ['MSFT', 'Mar 2000', 43.22]
+    ]
+
+    // let testData = d3.csvFormat('Stocks.csv', ['symbol', 'date', 'price'])
+    // console.log(testData)
+    // d3.csv('../stocks.csv', function(error, data) {
+    d3.csv('stocks.csv', function(error, data) {
+      console.log(data, error)
       data.forEach(function(d) {
         d.date = parseDate(d.date)
         d.price = +d.price
