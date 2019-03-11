@@ -3,43 +3,12 @@ import * as d3 from 'd3'
 import '../App.css'
 import '../stocks.csv'
 
-export default class Graphs extends Component {
-  // chart = {
-  //   const svg = d3.select(DOM.svg(width, height))
-  //       .style("-webkit-tap-highlight-color", "transparent")
-  //       .style("overflow", "visible");
-
-  //   svg.append("g")
-  //       .call(xAxis);
-
-  //   svg.append("g")
-  //       .call(yAxis);
-
-  //   svg.append("path")
-  //       .datum(data)
-  //       .attr("fill", "none")
-  //       .attr("stroke", "steelblue")
-  //       .attr("stroke-width", 1.5)
-  //       .attr("stroke-linejoin", "round")
-  //       .attr("stroke-linecap", "round")
-  //       .attr("d", line);
-
-  //   const tooltip = svg.append("g");
-
-  //   svg.on("touchmove mousemove", function() {
-  //     const {date, value} = bisect(d3.mouse(this)[0]);
-
-  //     tooltip
-  //         .attr("transform", `translate(${x(date)},${y(value)})`)
-  //         .call(callout, `${value.toLocaleString(undefined, {style: "currency", currency: "USD"})}
-  // ${date.toLocaleString(undefined, {month: "short", day: "numeric", year: "numeric"})}`);
-  //   });
-
-  //   svg.on("touchend mouseleave", () => tooltip.call(callout, null));
-
-  //   return svg.node();
-  // }
+export default class Scatter extends Component {
   componentDidMount() {
+    this.plot()
+  }
+
+  componentDidUpdate() {
     this.plot()
   }
 
@@ -49,9 +18,8 @@ export default class Graphs extends Component {
       width = 600 - margin.left - margin.right,
       height = 270 - margin.top - margin.bottom
     // Parse the date / time
-    const parseDate = d3.timeParse('%b %Y')
     // Set the ranges
-    const x = d3.scaleTime([0, width])
+    const x = d3.scaleLinear([0, width])
     const y = d3.scaleLinear([height, 0])
     // Define the axes
     const xAxis = d3.axisBottom(x).ticks(5)
@@ -88,35 +56,34 @@ export default class Graphs extends Component {
 
     // console.log(data, error)
     fakeData.forEach(function(d) {
-      d.date = parseDate(d.date)
       d.price = +d.price
     })
     // Scale the range of the data
     x.domain(
-      d3.extent(fakeData, function(d) {
-        return d.date
+      d3.extent(this.props.data, function(d) {
+        return d.movingBank
       })
     )
     y.domain([
       0,
       d3.max(fakeData, function(d) {
-        return d.price
+        return d.movingBank
       })
     ])
     // Nest the entries by symbol
-    const dataNest = d3
-      .nest()
-      .key(function(d) {
-        return d.symbol
-      })
-      .entries(fakeData)
-    // Loop through each symbol / key
-    dataNest.forEach(function(d) {
-      svg
-        .append('path')
-        .attr('class', 'line')
-        .attr('d', priceline(d.values))
-    })
+    // const dataNest = d3
+    //   .nest()
+    //   .key(function(d) {
+    //     return d.symbol
+    //   })
+    //   .entries(fakeData)
+    // // Loop through each symbol / key
+    // dataNest.forEach(function(d) {
+    //   svg
+    //     .append('path')
+    //     .attr('class', 'line')
+    //     .attr('d', priceline(d.values))
+    // })
     // Add the X Axis
     svg
       .append('g')
