@@ -8,17 +8,19 @@ export class Board extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      bank: 4000,
-      bet: 5,
+      bank: 400,
+      bet: 1,
+      initialBet: 1,
       loops: 1000,
-      low: 4000,
-      high: 4000,
-      movingBank: [4000],
+      low: 400,
+      high: 400,
+      movingBank: [400],
       result: 0,
       results: [0],
       streak: 0,
       streaks: [],
-      win: true
+      win: true,
+      winNumber: 13
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleClick = this.handleClick.bind(this)
@@ -35,7 +37,7 @@ export class Board extends Component {
     const max = 36
     const min = 0
     const result = Number(Math.floor(Math.random() * (max - min + 1) + min))
-    let win = result < 25 ? false : true
+    let win = result < this.state.winNumber ? false : true
     const streak =
       (!win && !this.state.win) || (win && this.state.win)
         ? this.state.streak + 1
@@ -46,7 +48,7 @@ export class Board extends Component {
     newResult.push(result)
     const newBank = !win
       ? this.state.bank - this.state.bet
-      : this.state.bank + this.state.bet * 3
+      : this.state.bank + this.state.bet * 1
     const newMovingBank = this.state.movingBank.slice(0)
 
     newMovingBank.push(newBank)
@@ -55,7 +57,7 @@ export class Board extends Component {
       results: newResult,
       bank: newBank,
       movingBank: newMovingBank,
-      bet: !win ? this.state.bet * 2 : 5,
+      bet: !win ? this.state.bet * 2 : this.state.initialBet,
       low: newMovingBank.slice(0).sort(function(a, b) {
         return a - b
       })[0],
@@ -87,15 +89,18 @@ export class Board extends Component {
     for (let i = 0; i < loops; i++) {
       result = Math.floor(Math.random() * (max - min + 1) + min)
       results.push(result)
-      bank = result < 25 ? bank - bet : bank + bet * 3
+      bank = result < this.state.winNumber ? bank - bet : bank + bet * 1
       movingBank.push(bank)
-      bet = result < 25 ? bet * 2 : 5
+      bet = result < this.state.winNumber ? bet * 2 : this.state.initialBet
       let previousStreak = streak
-      streak = (result < 25 && !win) || (result > 24 && win) ? streak + 1 : 1
-      win = result < 25 ? false : true
+      streak =
+        (result < this.state.winNumber && !win) || (result > 24 && win)
+          ? streak + 1
+          : 1
+      win = result < this.state.winNumber ? false : true
       win !== perviousWin && updateStreaks.push(previousStreak)
       perviousWin = win
-      bet = streak > 5 ? 5 : bet
+      bet = streak > 4 ? this.state.initialBet : bet
     }
     this.setState({
       result: result,
